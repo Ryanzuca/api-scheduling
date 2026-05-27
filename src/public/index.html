@@ -3,64 +3,333 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barbearia - Agendamentos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Barbearia Pro - Sistema Completo</title>
+
+    <!-- Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <style>
         * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* Variáveis de cor - LUXO PREMIUM */
+        
+         :root {
+            --gold: #d4af37;
+            /* Dourado luxo */
+            --gold-light: #f3e5ab;
+            /* Dourado claro */
+            --gold-dark: #aa7c11;
+            /* Dourado escuro */
+            --dark-bg: #0a0a0a;
+            /* Preto absoluto */
+            --dark-card: #111111;
+            /* Preto suave */
+            --dark-surface: #1a1a1a;
+            /* Cinza escuro premium */
+            --white-lux: #faf9f6;
+            /* Branco perolado */
+            --gray-lux: #2a2a2a;
+            /* Cinza premium */
+            --success: #2d6a4f;
+            /* Verde esmeralda */
+            --danger: #9b2c2c;
+            /* Vermelho rubi */
+            --warning: #d4af37;
+            /* Dourado para alertas */
         }
         
         body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
+            font-family: 'Playfair Display', 'Georgia', 'Times New Roman', serif;
+            background: var(--dark-bg);
+            min-height: 100vh;
             padding: 20px;
-            background: #f0f2f5;
+            position: relative;
+        }
+        /* Overlay de textura sutil */
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.05"><path fill="%23d4af37" d="M100 0L130 70L200 70L145 115L170 190L100 145L30 190L55 115L0 70L70 70L100 0Z"/></svg>');
+            background-repeat: repeat;
+            background-size: 40px;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        /* Header Luxo */
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px 30px;
+            background: rgba(17, 17, 17, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo-icon {
+            font-size: 3.5em;
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.5));
         }
         
         h1 {
-            color: #333;
-            text-align: center;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 1.8em;
+            text-shadow: none;
+            font-weight: 600;
+            letter-spacing: 2px;
+            font-family: 'Playfair Display', serif;
         }
         
+        .btn-tema {
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            padding: 10px 24px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .btn-tema:hover {
+            background: var(--gold);
+            color: var(--dark-bg);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+        
+        body.tema-escuro {
+            background: var(--dark-bg);
+        }
+        
+        body.tema-escuro .card {
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+        
+        body.tema-escuro .card h2 {
+            color: var(--gold);
+        }
+        
+        body.tema-escuro table {
+            background: var(--dark-card);
+        }
+        
+        body.tema-escuro td {
+            border-bottom-color: var(--gray-lux);
+        }
+        
+        body.tema-escuro input,
+        body.tema-escuro select {
+            background: var(--dark-surface);
+            color: var(--white-lux);
+            border-color: var(--gold);
+        }
+        /* Cards Premium */
+        
         .card {
-            background: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            background: var(--dark-card);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
         }
         
         .card h2 {
-            margin-top: 0;
-            color: #667eea;
+            color: var(--gold);
+            margin-bottom: 25px;
+            border-left: 3px solid var(--gold);
+            padding-left: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 1.5em;
+            letter-spacing: 1px;
         }
+        /* Estatísticas Grid - Luxo */
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
         }
         
         .stat-card {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #0d0d0d 0%, var(--dark-surface) 100%);
             color: white;
-            padding: 20px;
-            border-radius: 10px;
+            padding: 25px;
+            border-radius: 20px;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+        }
+        
+        .stat-card::after {
+            content: '✦';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: var(--gold);
+            font-size: 14px;
+            opacity: 0.6;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--gold);
+            box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2);
         }
         
         .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
+            font-size: 2.8em;
+            font-weight: 800;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
+        
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-top: 8px;
+            letter-spacing: 1px;
+        }
+        /* Serviços Grid */
+        
+        .servicos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .servico-card {
+            background: linear-gradient(135deg, var(--dark-surface) 0%, #0d0d0d 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        
+        .servico-card:hover {
+            transform: scale(1.03);
+            border-color: var(--gold);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.15);
+        }
+        
+        .servico-card.selecionado {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, #1a1a1a 0%, var(--dark-surface) 100%);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+        
+        .servico-nome {
+            font-weight: 700;
+            font-size: 1.1em;
+            color: var(--gold-light);
+            margin-bottom: 5px;
+        }
+        
+        .servico-preco {
+            color: var(--gold);
+            font-weight: 800;
+            margin-top: 5px;
+            font-size: 1.2em;
+        }
+        /* Estrelas Avaliação */
+        
+        .avaliacao {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .star {
+            font-size: 2.2em;
+            cursor: pointer;
+            color: #333;
+            transition: all 0.2s;
+        }
+        
+        .star.ativa {
+            color: var(--gold);
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+        
+        .star:hover {
+            transform: scale(1.15);
+            color: var(--gold-light);
+        }
+        /* Filtros */
         
         .filters {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
         }
         
         .filter-group {
@@ -69,199 +338,548 @@
         }
         
         .filter-group label {
-            font-weight: bold;
-            margin-bottom: 5px;
-            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gold);
+            letter-spacing: 0.5px;
         }
         
         .filter-group input,
         .filter-group select {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--dark-surface);
+            color: var(--white-lux);
         }
+        
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        /* Botões Premium */
         
         .btn-group {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             flex-wrap: wrap;
         }
         
         .btn {
-            padding: 10px 20px;
+            padding: 12px 28px;
             border: none;
-            border-radius: 5px;
+            border-radius: 40px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            transition: all 0.3s;
+            font-size: 14px;
+            letter-spacing: 0.5px;
         }
         
         .btn-primary {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--dark-bg);
+            border: 1px solid var(--gold-light);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
         }
         
         .btn-success {
-            background: #28a745;
+            background: linear-gradient(135deg, #1a472a 0%, var(--success) 100%);
             color: white;
         }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #8b691b 0%, var(--gold) 100%);
+            color: var(--dark-bg);
+        }
+        
+        .btn-success:hover,
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+        /* Formulário */
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--gold);
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 12px;
+            font-size: 14px;
+            background: var(--dark-surface);
+            color: var(--white-lux);
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        /* Alertas */
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            font-weight: 500;
+        }
+        
+        .alert-success {
+            background: rgba(45, 106, 79, 0.2);
+            color: #6fbf4c;
+            border-left: 4px solid var(--success);
+        }
+        
+        .alert-error {
+            background: rgba(155, 44, 44, 0.2);
+            color: #e57373;
+            border-left: 4px solid var(--danger);
+        }
+        /* Tabela Premium */
         
         table {
             width: 100%;
             border-collapse: collapse;
-            background: white;
-        }
-        
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
+            border-radius: 16px;
+            overflow: hidden;
         }
         
         th {
-            background: #667eea;
-            color: white;
+            background: linear-gradient(135deg, #0d0d0d 0%, var(--dark-surface) 100%);
+            color: var(--gold);
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--gold);
+        }
+        
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
         }
         
         .status-agendado {
-            color: #28a745;
-            font-weight: bold;
+            color: #6fbf4c;
+            font-weight: 700;
         }
         
         .status-cancelado {
-            color: #dc3545;
-            font-weight: bold;
+            color: #e57373;
+            font-weight: 700;
+        }
+        /* Badge Barbeiro */
+        
+        .badge-barbeiro {
+            background: linear-gradient(135deg, var(--gold-dark) 0%, var(--gold) 100%);
+            color: var(--dark-bg);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            display: inline-block;
+        }
+        /* Gráfico */
+        
+        .chart-container {
+            max-width: 400px;
+            margin: 0 auto;
         }
         
-        .alert {
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 15px;
+        canvas {
+            max-height: 250px;
         }
+        /* Horário Funcionamento */
         
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-        }
-        
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-        
-        form .form-group {
-            margin-bottom: 15px;
-        }
-        
-        form input,
-        form select {
+        .horario-tabela {
             width: 100%;
+            margin-top: 15px;
+        }
+        
+        .horario-tabela td {
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        }
+        /* Responsivo */
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .servicos-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            th,
+            td {
+                padding: 8px;
+                font-size: 11px;
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+            .btn {
+                padding: 8px 16px;
+                font-size: 12px;
+            }
+            .header {
+                padding: 15px;
+            }
+        }
+        /* FORÇAR TEXTO BRANCO NA TABELA */
+        
+        table td,
+        table tr,
+        .lista-agendamentos td,
+        #lista-agendamentos td {
+            color: #ffffff !important;
         }
         
-        form button {
-            background: #28a745;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .cancelar-btn {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 3px;
+        body.tema-escuro table td,
+        body.tema-escuro #lista-agendamentos td {
+            color: #ffffff !important;
         }
     </style>
 </head>
 
 <body>
-    <h1>Sistema de Agendamentos</h1>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo-area">
+                <div class="logo-icon">✂️</div>
+                <h1>Barbearia Pro - Sistema Completo</h1>
+            </div>
+            <button class="btn-tema" onclick="alternarTema()">🌙 Tema Escuro</button>
+        </div>
 
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number" id="total-count">0</div>
-            <div>Total</div>
+        <!-- Dashboard Estatísticas -->
+        <div class="stats-grid">
+            <div class="stat-card" onclick="aplicarFiltroStatus('todos')">
+                <div class="stat-number" id="total-count">0</div>
+                <div class="stat-label">📊 Total Agendamentos</div>
+            </div>
+            <div class="stat-card" onclick="aplicarFiltroStatus('agendado')">
+                <div class="stat-number" id="agendados-count">0</div>
+                <div class="stat-label">✅ Agendados</div>
+            </div>
+            <div class="stat-card" onclick="aplicarFiltroStatus('cancelado')">
+                <div class="stat-number" id="cancelados-count">0</div>
+                <div class="stat-label">❌ Cancelados</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="faturamento-count">0€</div>
+                <div class="stat-label">💰 Faturamento Estimado</div>
+            </div>
         </div>
-        <div class="stat-card">
-            <div class="stat-number" id="agendados-count">0</div>
-            <div>Agendados</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="cancelados-count">0</div>
-            <div>Cancelados</div>
-        </div>
-    </div>
 
-    <div class="card">
-        <h2>📅 Novo Agendamento</h2>
-        <div id="alert"></div>
-        <form id="form-agendamento">
-            <div class="form-group"><label>Nome do Cliente *</label><input type="text" id="cliente_nome" required placeholder="Digite o nome"></div>
-            <div class="form-group"><label>Telefone</label><input type="text" id="cliente_telefone" placeholder="(+351) 999-999-999"></div>
-            <div class="form-group"><label>Data *</label><input type="date" id="data" required></div>
-            <div class="form-group"><label>Horário *</label><select id="hora" required><option value="">Selecione uma data primeiro</option></select></div>
-            <button type="submit">✅ Agendar</button>
-        </form>
-    </div>
-
-    <div class="card">
-        <h2>🔍 Filtros</h2>
-        <div class="filters">
-            <div class="filter-group"><label>Data</label><input type="date" id="filtro-data"></div>
-            <div class="filter-group"><label>Status</label><select id="filtro-status"><option value="todos">Todos</option><option value="agendado">Agendados</option><option value="cancelado">Cancelados</option></select></div>
-            <div class="filter-group"><label>Buscar Cliente</label><input type="text" id="filtro-busca" placeholder="Digite o nome"></div>
+        <!-- Gráfico -->
+        <div class="card">
+            <h2>📈 Agendamentos por Dia</h2>
+            <div class="chart-container">
+                <canvas id="grafico-agendamentos"></canvas>
+            </div>
         </div>
-        <div class="btn-group">
-            <button class="btn btn-primary" id="btn-aplicar">🔍 Aplicar Filtros</button>
-            <button class="btn btn-success" id="btn-limpar">🔄 Limpar Filtros</button>
-            <button class="btn btn-success" id="btn-exportar">📥 Exportar CSV</button>
-        </div>
-    </div>
 
-    <div class="card">
-        <h2>📋 Agendamentos</h2>
-        <div style="overflow-x: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Telefone</th>
-                        <th>Data</th>
-                        <th>Horário</th>
-                        <th>Status</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody id="lista-agendamentos">
-                    <tr>
-                        <td colspan="7" class="loading">Carregando...</td>
-                    </tr>
-                </tbody>
+        <!-- Serviços da Barbearia -->
+        <div class="card">
+            <h2>✂️ Nossos Serviços</h2>
+            <div class="servicos-grid" id="servicos-grid">
+                <div class="servico-card" data-servico="Corte" data-preco="30" onclick="selecionarServico(this)">
+                    <div class="servico-nome">✂️ Corte</div>
+                    <div class="servico-preco">30,00€</div>
+                </div>
+                <div class="servico-card" data-servico="Barba" data-preco="25" onclick="selecionarServico(this)">
+                    <div class="servico-nome">🧔 Barba</div>
+                    <div class="servico-preco">25,00€</div>
+                </div>
+                <div class="servico-card" data-servico="Corte + Barba" data-preco="50" onclick="selecionarServico(this)">
+                    <div class="servico-nome">✂️🧔 Corte + Barba</div>
+                    <div class="servico-preco">50,00€</div>
+                </div>
+                <div class="servico-card" data-servico="Sobrancelha" data-preco="15" onclick="selecionarServico(this)">
+                    <div class="servico-nome">👁️ Sobrancelha</div>
+                    <div class="servico-preco">15,00€</div>
+                </div>
+                <div class="servico-card" data-servico="Pezinho" data-preco="20" onclick="selecionarServico(this)">
+                    <div class="servico-nome">🦶 Pezinho</div>
+                    <div class="servico-preco">20,00€</div>
+                </div>
+                <div class="servico-card" data-servico="Hidratação" data-preco="40" onclick="selecionarServico(this)">
+                    <div class="servico-nome">💧 Hidratação</div>
+                    <div class="servico-preco">40,00€</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Avaliação -->
+        <div class="card">
+            <h2>⭐ Avalie seu Atendimento</h2>
+            <div class="avaliacao" id="avaliacao">
+                <span class="star" data-nota="1" onclick="avaliar(1)">☆</span>
+                <span class="star" data-nota="2" onclick="avaliar(2)">☆</span>
+                <span class="star" data-nota="3" onclick="avaliar(3)">☆</span>
+                <span class="star" data-nota="4" onclick="avaliar(4)">☆</span>
+                <span class="star" data-nota="5" onclick="avaliar(5)">☆</span>
+            </div>
+            <div id="avaliacao-mensagem" style="text-align: center; margin-top: 10px;"></div>
+        </div>
+
+        <!-- Horário de Funcionamento -->
+        <div class="card">
+            <h2>🕐 Horário de Funcionamento</h2>
+            <table class="horario-tabela">
+                <tr>
+                    <td><strong>Segunda - Sexta</strong></td>
+                    <td>09:00 - 19:00</td>
+                </tr>
+                <tr>
+                    <td><strong>Sábado</strong></td>
+                    <td>09:00 - 17:00</td>
+                </tr>
+                <tr>
+                    <td><strong>Domingo</strong></td>
+                    <td>Fechado</td>
+                </tr>
+                <tr>
+                    <td><strong>Almoço</strong></td>
+                    <td>12:00 - 13:00</td>
+                </tr>
             </table>
+        </div>
+
+        <!-- Novo Agendamento -->
+        <div class="card">
+            <h2>📅 Novo Agendamento</h2>
+            <div id="alert"></div>
+            <form id="form-agendamento">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome do Cliente *</label>
+                        <input type="text" id="cliente_nome" required placeholder="Digite seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone *</label>
+                        <input type="tel" id="cliente_telefone" required placeholder="(+351) 999-999-999">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Serviço *</label>
+                        <select id="servico" required>
+                            <option value="">Selecione um serviço</option>
+                            <option value="Corte">✂️ Corte -30€</option>
+                            <option value="Barba">🧔 Barba -25€</option>
+                            <option value="Corte + Barba">✂️🧔 Corte + Barba -50€</option>
+                            <option value="Sobrancelha">👁️ Sobrancelha -15€</option>
+                            <option value="Pezinho">🦶 Pezinho -20€</option>
+                            <option value="Hidratação">💧 Hidratação -40€</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Data *</label>
+                        <input type="date" id="data" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Horário *</label>
+                        <select id="hora" required>
+                            <option value="">Selecione uma data primeiro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Barbeiro *</label>
+                        <select id="barbeiro" required>
+                            <option value="João">✂️ João - Especialista em Corte</option>
+                            <option value="Carlos">✂️ Carlos - Especialista em Barba</option>
+                            <option value="Ana">✂️ Ana - Especialista em Acabamento</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Observações</label>
+                        <input type="text" id="observacoes" placeholder="Alguma observação?">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">✅ Confirmar Agendamento</button>
+            </form>
+        </div>
+
+        <!-- Filtros -->
+        <div class="card">
+            <h2>🔍 Filtros</h2>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Data</label>
+                    <input type="date" id="filtro-data">
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="filtro-status">
+                        <option value="todos">Todos</option>
+                        <option value="agendado">Agendados</option>
+                        <option value="cancelado">Cancelados</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Buscar Cliente</label>
+                    <input type="text" id="filtro-busca" placeholder="Digite o nome">
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btn-aplicar">🔍 Aplicar Filtros</button>
+                <button class="btn btn-warning" id="btn-limpar">🔄 Limpar Filtros</button>
+                <button class="btn btn-success" id="btn-exportar">📥 Exportar Excel</button>
+            </div>
+        </div>
+
+        <!-- Lista de Agendamentos -->
+        <div class="card">
+            <h2>📋 Histórico de Agendamentos</h2>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Telefone</th>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Horário</th>
+                            <th>Barbeiro</th>
+                            <th>Status</th>
+                            <th>Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-agendamentos">
+                        <tr class="loading">
+                            <td colspan="9">🔄 Carregando...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
         const API_URL = '/agendamentos';
+        let grafico = null;
+        let servicoSelecionado = null;
+        let avaliacaoAtual = 0;
+
+        // Alternar tema
+        function alternarTema() {
+            document.body.classList.toggle('tema-escuro');
+            const btn = document.querySelector('.btn-tema');
+            if (document.body.classList.contains('tema-escuro')) {
+                btn.innerHTML = '☀️ Tema Claro';
+            } else {
+                btn.innerHTML = '🌙 Tema Escuro';
+            }
+        }
+
+        // Selecionar serviço nos cards
+        function selecionarServico(elemento) {
+            document.querySelectorAll('.servico-card').forEach(card => {
+                card.classList.remove('selecionado');
+            });
+            elemento.classList.add('selecionado');
+
+            const servico = elemento.dataset.servico;
+            const preco = elemento.dataset.preco;
+            servicoSelecionado = {
+                nome: servico,
+                preco: preco
+            };
+
+            // Atualizar select do formulário
+            const selectServico = document.getElementById('servico');
+            for (let i = 0; i < selectServico.options.length; i++) {
+                if (selectServico.options[i].value === servico) {
+                    selectServico.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        // Avaliação com estrelas
+        function avaliar(nota) {
+            avaliacaoAtual = nota;
+            const stars = document.querySelectorAll('.star');
+            stars.forEach((star, index) => {
+                if (index < nota) {
+                    star.innerHTML = '★';
+                    star.classList.add('ativa');
+                } else {
+                    star.innerHTML = '☆';
+                    star.classList.remove('ativa');
+                }
+            });
+            document.getElementById('avaliacao-mensagem').innerHTML = `⭐ Obrigado pela avaliação! Você nos deu ${nota} estrela(s)!`;
+            setTimeout(() => {
+                document.getElementById('avaliacao-mensagem').innerHTML = '';
+            }, 3000);
+        }
 
         function mostrarMensagem(texto, tipo) {
             const alertDiv = document.getElementById('alert');
             alertDiv.innerHTML = `<div class="alert alert-${tipo}">${texto}</div>`;
             setTimeout(() => alertDiv.innerHTML = '', 5000);
+        }
+
+        // Atualizar faturamento
+        async function atualizarFaturamento() {
+            try {
+                const resposta = await fetch(`${API_URL}/filtros`);
+                const dados = await resposta.json();
+
+                const agendados = dados.agendamentos.filter(a => a.status === 'agendado');
+                const precos = {
+                    'Corte': 30,
+                    'Barba': 25,
+                    'Corte + Barba': 50,
+                    'Sobrancelha': 15,
+                    'Pezinho': 20,
+                    'Hidratação': 40
+                };
+
+                let total = 0;
+                agendados.forEach(a => {
+                    total += precos[a.servico || 'Corte'] || 30;
+                });
+
+                document.getElementById('faturamento-count').textContent = `€ ${total}`;
+            } catch (e) {
+                console.error(e);
+            }
         }
 
         async function carregarAgendamentos() {
@@ -273,9 +891,12 @@
                 document.getElementById('agendados-count').textContent = dados.estatisticas.agendados;
                 document.getElementById('cancelados-count').textContent = dados.estatisticas.cancelados;
 
+                await atualizarFaturamento();
+                atualizarGrafico(dados.agendamentos);
+
                 const tbody = document.getElementById('lista-agendamentos');
                 if (dados.agendamentos.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="7" class="loading">Nenhum agendamento encontrado</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="9" class="loading">📭 Nenhum agendamento encontrado</td></tr>';
                     return;
                 }
 
@@ -286,15 +907,53 @@
                         <td>${ag.id}</td>
                         <td>${ag.cliente_nome}</td>
                         <td>${ag.cliente_telefone || '-'}</td>
+                        <td>${ag.servico || 'Corte'}</td>
                         <td>${ag.data}</td>
                         <td>${ag.hora.substring(0,5)}</td>
+                        <td><span class="badge-barbeiro">${ag.barbeiro || 'João'}</span></td>
                         <td class="status-${ag.status}">${ag.status === 'agendado' ? '✅ Agendado' : '❌ Cancelado'}</td>
-                        <td>${ag.status === 'agendado' ? `<button class="cancelar-btn" onclick="cancelar(${ag.id})">Cancelar</button>` : '—'}</td>
+                        <td>${ag.status === 'agendado' ? `<button class="btn btn-danger" style="background:#dc3545;color:white;border:none;padding:5px 10px;border-radius:5px;cursor:pointer;" onclick="cancelar(${ag.id})">Cancelar</button>` : '—'}</td>
                     `;
                 });
             } catch (error) {
-                document.getElementById('lista-agendamentos').innerHTML = '<tr><td colspan="7" class="loading">❌ Erro ao carregar</td></tr>';
+                console.error('Erro:', error);
+                document.getElementById('lista-agendamentos').innerHTML = '<tr><td colspan="9">❌ Erro ao carregar</td></tr>';
             }
+        }
+
+        function atualizarGrafico(agendamentos) {
+            const agendadosPorData = {};
+            agendamentos.forEach(ag => {
+                if (ag.status === 'agendado') {
+                    const data = ag.data;
+                    agendadosPorData[data] = (agendadosPorData[data] || 0) + 1;
+                }
+            });
+            
+            const datas = Object.keys(agendadosPorData).sort().slice(-7);
+            const quantidades = datas.map(d => agendadosPorData[d]);
+            
+            const ctx = document.getElementById('grafico-agendamentos').getContext('2d');
+            if (grafico) grafico.destroy();
+            
+            grafico = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: datas,
+                    datasets: [{
+                        label: 'Agendamentos',
+                        data: quantidades,
+                        backgroundColor: 'rgba(102, 126, 234, 0.7)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: { y: { beginAtZero: true, stepSize: 1 } }
+                }
+            });
         }
 
         async function carregarHorarios(data) {
@@ -338,16 +997,26 @@
 
         document.getElementById('form-agendamento').addEventListener('submit', async (e) => {
             e.preventDefault();
+            
+            const servicoSelect = document.getElementById('servico');
+            const servicoTexto = servicoSelect.options[servicoSelect.selectedIndex]?.text || '';
+            
             const dados = {
                 cliente_nome: document.getElementById('cliente_nome').value,
                 cliente_telefone: document.getElementById('cliente_telefone').value,
+                servico: document.getElementById('servico').value,
                 data: document.getElementById('data').value,
-                hora: document.getElementById('hora').value
+                hora: document.getElementById('hora').value,
+                barbeiro: document.getElementById('barbeiro').value,
+                observacoes: document.getElementById('observacoes').value,
+                avaliacao: avaliacaoAtual
             };
-            if (!dados.cliente_nome || !dados.data || !dados.hora) {
-                mostrarMensagem('Preencha nome, data e horário!', 'error');
+            
+            if (!dados.cliente_nome || !dados.data || !dados.hora || !dados.servico) {
+                mostrarMensagem('Preencha nome, serviço, data e horário!', 'error');
                 return;
             }
+            
             try {
                 const resposta = await fetch(API_URL, {
                     method: 'POST',
@@ -356,7 +1025,7 @@
                 });
                 const resultado = await resposta.json();
                 if (resposta.ok) {
-                    mostrarMensagem('Agendamento criado!', 'success');
+                    mostrarMensagem('Agendamento criado com sucesso!', 'success');
                     document.getElementById('form-agendamento').reset();
                     document.getElementById('data').value = new Date().toISOString().split('T')[0];
                     carregarAgendamentos();
@@ -370,6 +1039,7 @@
         });
 
         document.getElementById('data').addEventListener('change', (e) => carregarHorarios(e.target.value));
+        
         document.getElementById('btn-aplicar').addEventListener('click', async () => {
             const data = document.getElementById('filtro-data').value;
             const status = document.getElementById('filtro-status').value;
@@ -384,13 +1054,13 @@
             }
             const tbody = document.getElementById('lista-agendamentos');
             if (dados.agendamentos.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="loading">Nenhum resultado encontrado</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9">Nenhum resultado encontrado</td></tr>';
                 return;
             }
             tbody.innerHTML = '';
             dados.agendamentos.forEach(ag => {
                 const row = tbody.insertRow();
-                row.innerHTML = `<td>${ag.id}</td><td>${ag.cliente_nome}</td><td>${ag.cliente_telefone || '-'}</td><td>${ag.data}</td><td>${ag.hora.substring(0,5)}</td><td class="status-${ag.status}">${ag.status === 'agendado' ? '✅ Agendado' : '❌ Cancelado'}</td><td>${ag.status === 'agendado' ? `<button class="cancelar-btn" onclick="cancelar(${ag.id})">Cancelar</button>` : '—'}</td>`;
+                row.innerHTML = `<td>${ag.id}</td><td>${ag.cliente_nome}</td><td>${ag.cliente_telefone || '-'}</td><td>${ag.servico || 'Corte'}</td><td>${ag.data}</td><td>${ag.hora.substring(0,5)}</td><td><span class="badge-barbeiro">${ag.barbeiro || 'João'}</span></td><td class="status-${ag.status}">${ag.status === 'agendado' ? '✅ Agendado' : '❌ Cancelado'}</td><td>${ag.status === 'agendado' ? `<button onclick="cancelar(${ag.id})" style="background:#dc3545;color:white;border:none;padding:5px 10px;border-radius:5px;">Cancelar</button>` : '—'}</td>`;
             });
         });
 
@@ -408,7 +1078,13 @@
             if (data) url += `data=${data}&`;
             if (status && status !== 'todos') url += `status=${status}`;
             window.open(url, '_blank');
+            mostrarMensagem('Relatório exportado!', 'success');
         });
+
+        function aplicarFiltroStatus(status) {
+            document.getElementById('filtro-status').value = status;
+            document.getElementById('btn-aplicar').click();
+        }
 
         const hoje = new Date().toISOString().split('T')[0];
         document.getElementById('data').min = hoje;
